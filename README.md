@@ -39,6 +39,9 @@ Again, we need more info from the client here. Are these in-suspense loans only 
 # Resources
 
 [Software Requirement Specification Document](https://docs.google.com/document/d/1GOlYUiFW_JA_SkW9TGgr0nLoAtgv1Vz_/edit?usp=sharing&ouid=106228635187920286644&rtpof=true&sd=true)
+
 [Video Series - ASP.NET Core Web API with Entity Framework](https://youtube.com/playlist?list=PL4WEkbdagHIQVbiTwos0E38VghMJA06OT)
+
 [MS Docs - Data Access in ASP.NET](https://docs.microsoft.com/en-us/aspnet/whitepapers/aspnet-data-access-content-map)
+
 [All extension methods for querying our DB](https://docs.microsoft.com/en-us/dotnet/api/system.linq.iqueryable-1?view=net-5.0)
