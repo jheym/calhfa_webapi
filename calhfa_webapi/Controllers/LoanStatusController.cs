@@ -44,18 +44,22 @@ namespace calhfa_webapi.Controllers
 
 
         }
-
+        
+        /// <summary>
+        /// Counts the total number of loans which are being reviwed for either compliance or for purchase.
+        /// In these categories, it also sums which loans are being reviewed and being reviewed after suspension.
+        /// Pulls data from the LoanStatus table for counting
+        /// </summary>
+        /// <returns> a json object which contains the counts for the review categories </returns>
+        // GET: /api/LoanStatus/count
         [Route("count")]
         [HttpGet]
         public async Task<string> GetLoanCountAsync()
         {
-            var ComplianceReview = await _context.LoanStatuses.Where(l => l.StatusCode == 110 ||
-                                                                                    l.StatusCode == 210 ||
-                                                                                    l.StatusCode == 310 ||
-                                                                                    l.StatusCode == 410).ToListAsync();
+            // codes ending with '10' are in review, codes ending in '22' are suspended & being reviewed after a resubmit
+            var ComplianceReview = await _context.LoanStatuses.Where(l => l.StatusCode == 410).ToListAsync();
             var ComplianceSuspenseReview = await _context.LoanStatuses.Where(l => l.StatusCode == 422).ToListAsync();
-            var PurchaseReview = await _context.LoanStatuses.Where(l => l.StatusCode == 510 ||
-                                                                                    l.StatusCode == 810).ToListAsync();
+            var PurchaseReview = await _context.LoanStatuses.Where(l => l.StatusCode == 510).ToListAsync();
             var PurchaseSuspenseReview = await _context.LoanStatuses.Where(l => l.StatusCode == 522).ToListAsync();
 
             int complianceReviewCount = ComplianceReview.Count;
