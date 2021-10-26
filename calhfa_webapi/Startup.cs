@@ -38,6 +38,10 @@ namespace calhfa_webapi
              services.AddSwaggerGen(c =>
              {
                  c.SwaggerDoc("v1", new OpenApiInfo { Title = "calhfa_webapi", Version = "v1" });
+                 // configures swagger with the XML documentation comments
+                 var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                 var xmlPath = System.IO.Path.Combine(AppContext.BaseDirectory, xmlFile);
+                 c.IncludeXmlComments(xmlPath);
              });
             
         }
