@@ -44,35 +44,64 @@ namespace calhfa_webapi.Controllers
 
 
         }
-        
+
         /// <summary>
         /// Counts the total number of loans which are being reviwed for either compliance or for purchase.
-        /// In these categories, it also sums which loans are being reviewed and being reviewed after suspension.
+        /// In these categories, it also counts which loans are being reviewed after suspension.
         /// Pulls data from the LoanStatus table for counting
         /// </summary>
-        /// <returns> a json object which contains the counts for the review categories </returns>
+        /// <returns> a json formatted string which contains the counts for the review categories </returns>
         // GET: /api/LoanStatus/count
         [Route("count")]
         [HttpGet]
-        public async Task<string> GetLoanCountAsync()
+        public string GetLoanCount()
         {
             // codes ending with '10' are in review, codes ending in '22' are suspended & being reviewed after a resubmit
-            var ComplianceReview = await _context.LoanStatuses.Where(l => l.StatusCode == 410).ToListAsync();
-            var ComplianceSuspenseReview = await _context.LoanStatuses.Where(l => l.StatusCode == 422).ToListAsync();
-            var PurchaseReview = await _context.LoanStatuses.Where(l => l.StatusCode == 510).ToListAsync();
-            var PurchaseSuspenseReview = await _context.LoanStatuses.Where(l => l.StatusCode == 522).ToListAsync();
-
-            int complianceReviewCount = ComplianceReview.Count;
-            int complianceSuspenseReviewCount = ComplianceSuspenseReview.Count;
-            int purchaseReviewCount = PurchaseReview.Count;
-            int purchaseSuspenseReviewCount = PurchaseSuspenseReview.Count;
-
-            Console.WriteLine(complianceReviewCount);
+            int ComplianceReviewCount = GetReviewCount(410);
+            int ComplianceSuspenseReviewCount = GetReviewCount(422);
+            int PurchaseReviewCount = GetReviewCount(510);
+            int PurchaseSuspenseReviewCount = GetReviewCount(522);
 
             string jsonData = String.Format("{{compliantReviewCount: '{0}', compliantSuspenseCount: '{1}', purchaseReviewCount: '{2}', purchaseSuspenseCount: '{3}'}}",
-                complianceReviewCount, complianceSuspenseReviewCount, purchaseReviewCount, purchaseSuspenseReviewCount);
+                ComplianceReviewCount, ComplianceSuspenseReviewCount, PurchaseReviewCount, PurchaseSuspenseReviewCount);
 
             return Newtonsoft.Json.JsonConvert.SerializeObject(jsonData);
+        }
+
+        /// <summary>
+        /// takes a specific status code and counts how many loans are still at that specific stage of review
+        /// </summary>
+        /// <param name="statusCode">int</param>
+        /// <returns>a count of the loans still at that particular stage</returns>
+        private int GetReviewCount(int statusCode)
+        {
+            int count = 0;
+            var ComplianceReviewList =  _context.LoanStatuses.Where(l => l.StatusCode == statusCode).ToListAsync();
+            List<int> idList = new List<int>();
+            foreach ( var loanId in ComplianceReviewList.Result)
+            {
+                idList.Add(loanId.LoanId);
+            }
+            var unparsedList = _context.LoanStatuses.Where(l => idList.Contains(l.LoanId)).OrderBy(l => l.LoanId).ThenBy(l => l.StatusDate).ToListAsync();
+            for (var i = 0; i < unparsedList.Result.Count; i++)
+            {
+                if(unparsedList.Result[i].StatusCode == statusCode)
+                {
+                    if(unparsedList.Result[i] == unparsedList.Result.Last())
+                    {
+                        count++;
+                    }
+                    else
+                    {
+                        if(unparsedList.Result[i].LoanId != unparsedList.Result[i + 1].LoanId)
+                        {
+                            count++;
+                        }
+                    }
+                }
+            }
+
+            return count;
         }
     }
 }
