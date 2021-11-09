@@ -13,9 +13,9 @@ namespace calhfa_webapi.Controllers
     [ApiController]
     public class StatusCodesController : ControllerBase
     {
-        private readonly cal_haf_dummyContext _context;
+        private readonly cal_haf_Context _context;
 
-        public StatusCodesController(cal_haf_dummyContext context)
+        public StatusCodesController(cal_haf_Context context)
         {
             _context = context;
         }

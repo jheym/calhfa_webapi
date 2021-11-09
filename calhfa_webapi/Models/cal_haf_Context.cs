@@ -6,13 +6,13 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace calhfa_webapi.Models
 {
-    public partial class cal_haf_dummyContext : DbContext
+    public partial class cal_haf_Context : DbContext
     {
-        public cal_haf_dummyContext()
+        public cal_haf_Context()
         {
         }
 
-        public cal_haf_dummyContext(DbContextOptions<cal_haf_dummyContext> options)
+        public cal_haf_Context(DbContextOptions<cal_haf_Context> options)
             : base(options)
         {
         }
@@ -23,6 +23,7 @@ namespace calhfa_webapi.Models
         public virtual DbSet<LoanType> LoanTypes { get; set; }
         public virtual DbSet<StatusCode> StatusCodes { get; set; }
 
+        public virtual DbSet<ReviewQueue> ReviewQueue { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -34,6 +35,8 @@ namespace calhfa_webapi.Models
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasAnnotation("Relational:Collation", "SQL_Latin1_General_CP1_CI_AS");
+
+            modelBuilder.Entity<ReviewQueue>().HasNoKey();
 
             modelBuilder.Entity<Loan>(entity =>
             {

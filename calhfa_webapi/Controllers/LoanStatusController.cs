@@ -15,9 +15,9 @@ namespace calhfa_webapi.Controllers
     [ApiController]
     public class LoanStatusController : ControllerBase
     {
-        private readonly cal_haf_dummyContext _context;
+        private readonly cal_haf_Context _context;
 
-        public LoanStatusController(cal_haf_dummyContext context)
+        public LoanStatusController(cal_haf_Context context)
         {
             _context = context;
         }
@@ -62,20 +62,20 @@ namespace calhfa_webapi.Controllers
         public string GetLoanCount()
         {
             // codes ending with '10' are in review, codes ending in '22' are suspended & being reviewed after a resubmit
-            var ComplianceReviewList = GetReviewList(410);
-            var ComplianceReviewDate = GetReviewDate(ComplianceReviewList);
+            var ComplianceReviewList = GetQueueList(410, 1);
+            //var ComplianceReviewDate = GetReviewDate(ComplianceReviewList);
 
-            var ComplianceSuspenseReviewList = GetReviewList(422);
-            var ComplianceSuspenseDate = GetReviewDate(ComplianceSuspenseReviewList);
+            var ComplianceSuspenseReviewList = GetQueueList(422, 1);
+            //var ComplianceSuspenseDate = GetReviewDate(ComplianceSuspenseReviewList);
 
-            var PurchaseReviewList = GetReviewList(510);
-            var PurchaseReviewDate = GetReviewDate(PurchaseReviewList);
+            var PurchaseReviewList = GetQueueList(510, 2);
+            //var PurchaseReviewDate = GetReviewDate(PurchaseReviewList);
 
-            var PurchaseSuspenseReviewList = GetReviewList(522);
-            var PurchaseSuspenseDate = GetReviewDate(PurchaseSuspenseReviewList);
+            var PurchaseSuspenseReviewList = GetQueueList(522, 2);
+            //var PurchaseSuspenseDate = GetReviewDate(PurchaseSuspenseReviewList);
 
             string jsonData = String.Format("{{compliantReview: {{count: '{0}', date: '{1}'}}, compliantSuspense: {{ count: '{2}', date: '{3}' }}, purchaseReview: {{ count: '{4}', date: '{5}' }}, purchaseSuspense: '{{ count: '{6}', date: '{7}' }} }}",
-                ComplianceReviewList.Count, ComplianceReviewDate, ComplianceSuspenseReviewList.Count, ComplianceSuspenseDate, PurchaseReviewList.Count, PurchaseReviewDate, PurchaseSuspenseReviewList.Count, PurchaseSuspenseDate);
+                ComplianceReviewList.Count, 0, ComplianceSuspenseReviewList.Count, 0, PurchaseReviewList.Count, 0, PurchaseSuspenseReviewList.Count, 0);
 
             return Newtonsoft.Json.JsonConvert.SerializeObject(jsonData);
         }
@@ -84,54 +84,48 @@ namespace calhfa_webapi.Controllers
         /// takes a specific status code and counts how many loans are still at that specific stage of review
         /// </summary>
         /// <param name="statusCode">int</param>
-        /// <returns>a count of the loans still at that particular stage</returns>
-        private List<LoanStatus> GetReviewList(int statusCode)
+        /// <param name="categoryID">int</param>
+        /// <returns>list with all loans in specified queue</returns>
+        private List<ReviewQueue> GetQueueList(int statusCode, int categoryID)
         {
-            int count = 0;
-            var ComplianceReviewList =  _context.LoanStatuses.Where(l => l.StatusCode == statusCode).ToListAsync();
-            List<int> idList = new List<int>();
-            // adds all IDs which have the statusCode
-            foreach ( var loanId in ComplianceReviewList.Result)
-            {
-                idList.Add(loanId.LoanId);
-            }
-            // queries database again and sorts results based on LoanID and StatusDate 
-            var unparsedList = _context.LoanStatuses.Where(l => idList.Contains(l.LoanId)).OrderBy(l => l.LoanId).ThenBy(l => l.StatusDate).ToListAsync();
-            List<LoanStatus> parsedList = new List<LoanStatus>();
-            for (var i = 0; i < unparsedList.Result.Count; i++)
-            {
-                if(unparsedList.Result[i].StatusCode == statusCode)
-                {
-                    if(unparsedList.Result[i] == unparsedList.Result.Last())
-                    {
-                        parsedList.Add(unparsedList.Result[i]);
-                    }
-                    else
-                    {
-                        if(unparsedList.Result[i].LoanId != unparsedList.Result[i + 1].LoanId)
-                        {
-                            parsedList.Add(unparsedList.Result[i]);
-                        }
-                    }
-                }
-            }
-
-            return parsedList;
+            string SQLQuery = @"SELECT Loan.LoanID, LoanType.LoanCategoryID, StatusCode, LoanStatus.StatusDate
+                                FROM Loan
+                                INNER JOIN(
+                                    SELECT LoanStatus.LoanID, LoanStatus.StatusCode, LoanStatus.StatusSequence, LoanStatus.StatusDate
+                                    FROM LoanStatus
+                                    INNER JOIN (
+                                        SELECT LoanStatus.LoanID, MAX(LoanStatus.StatusSequence) AS StatusSequence
+                                        FROM LoanStatus
+                                        GROUP BY LoanID
+                                    ) MaxTable ON LoanStatus.LoanID = MaxTable.LoanID AND LoanStatus.StatusSequence = MaxTable.StatusSequence
+                                ) LoanStatus ON Loan.LoanID = LoanStatus.LoanID
+                                INNER Join(
+                                    SELECT LoanType.LoanCategoryID, LoanType.LoanTypeID
+                                    FROM LoanType
+                                    WHERE LoanType.LoanCategoryID = {0}
+                                ) LoanType ON LoanType.LoanTypeID = Loan.LoanTypeID
+                                WHERE StatusCode = {1}
+                                ORDER BY Loan.LoanID";
+            var queuedLoans = _context.ReviewQueue.FromSqlRaw(SQLQuery, categoryID, statusCode).ToList();
+            
+            return queuedLoans;
         }
 
-        private DateTime GetReviewDate(List<LoanStatus> list)
+        /**
+        private DateTime GetReviewDate(List<Loan> list)
         {
             var reviewDate = list[0].StatusDate;
             foreach (var loan in list)
             {
                 //NOTE this can change depending on whether the latest or oldest date is needed
-                if(loan.StatusDate.HasValue && loan.StatusDate < reviewDate)
+                if (loan.StatusDate.HasValue && loan.StatusDate > reviewDate)
                 {
                     reviewDate = loan.StatusDate;
                 }
             }
 
-            return (DateTime) reviewDate;
+            return (DateTime)reviewDate;
         }
+        **/
     }
 }
