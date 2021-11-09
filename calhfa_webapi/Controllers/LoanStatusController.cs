@@ -51,37 +51,39 @@ namespace calhfa_webapi.Controllers
         }
 
         /// <summary>
-        /// Counts the total number of loans which are being reviwed for either compliance or for purchase.
-        /// In these categories, it also counts which loans are being reviewed after suspension.
-        /// Pulls data from the LoanStatus table for counting
+        /// Counts the total number of loans which are queued for review pre and post closing
+        /// Also finds the oldest date for each queue category
         /// </summary>
-        /// <returns> a json formatted string which contains the counts for the review categories </returns>
+        /// <returns> a json formatted string which contains the counts and dates for the review categories </returns>
         // GET: /api/LoanStatus/count
         [Route("count")]
         [HttpGet]
         public string GetLoanCount()
         {
             // codes ending with '10' are in review, codes ending in '22' are suspended & being reviewed after a resubmit
-            var ComplianceReviewList = GetQueueList(410, 1);
-            //var ComplianceReviewDate = GetReviewDate(ComplianceReviewList);
+            var ComplianceQueueList = GetQueueList(410, 1);
+            var ComplianceReviewDate = GetReviewDate(ComplianceQueueList);
 
-            var ComplianceSuspenseReviewList = GetQueueList(422, 1);
-            //var ComplianceSuspenseDate = GetReviewDate(ComplianceSuspenseReviewList);
+            var ComplianceSuspenseQueueList = GetQueueList(422, 1);
+            var ComplianceSuspenseDate = GetReviewDate(ComplianceSuspenseQueueList);
 
-            var PurchaseReviewList = GetQueueList(510, 2);
-            //var PurchaseReviewDate = GetReviewDate(PurchaseReviewList);
+            var PurchaseQueueList = GetQueueList(510, 2);
+            var PurchaseReviewDate = GetReviewDate(PurchaseQueueList);
 
-            var PurchaseSuspenseReviewList = GetQueueList(522, 2);
-            //var PurchaseSuspenseDate = GetReviewDate(PurchaseSuspenseReviewList);
+            var PurchaseSuspenseQueueList = GetQueueList(522, 2);
+            var PurchaseSuspenseDate = GetReviewDate(PurchaseSuspenseQueueList);
 
-            string jsonData = String.Format("{{compliantReview: {{count: '{0}', date: '{1}'}}, compliantSuspense: {{ count: '{2}', date: '{3}' }}, purchaseReview: {{ count: '{4}', date: '{5}' }}, purchaseSuspense: '{{ count: '{6}', date: '{7}' }} }}",
-                ComplianceReviewList.Count, 0, ComplianceSuspenseReviewList.Count, 0, PurchaseReviewList.Count, 0, PurchaseSuspenseReviewList.Count, 0);
+            string jsonData = String.Format("{{compliantQueue: {{count: '{0}', date: '{1}'}}, " +
+                "compliantSuspenseQueue: {{ count: '{2}', date: '{3}' }}, " + 
+                "purchaseQueue: {{ count: '{4}', date: '{5}' }}, " + 
+                "purchaseSuspenseQueue: '{{ count: '{6}', date: '{7}' }} }}", ComplianceQueueList.Count, ComplianceReviewDate, ComplianceSuspenseQueueList.Count, ComplianceSuspenseDate,  PurchaseQueueList.Count, PurchaseReviewDate, PurchaseSuspenseQueueList.Count, PurchaseSuspenseDate);
 
             return Newtonsoft.Json.JsonConvert.SerializeObject(jsonData);
         }
 
         /// <summary>
-        /// takes a specific status code and counts how many loans are still at that specific stage of review
+        /// Queries the database for the loans which match the specified statuscode and categoryID.
+        /// The query is stored as a list with columns matching LoanID, LoanCategoryID, StatusCode, and StatusDate
         /// </summary>
         /// <param name="statusCode">int</param>
         /// <param name="categoryID">int</param>
@@ -111,14 +113,13 @@ namespace calhfa_webapi.Controllers
             return queuedLoans;
         }
 
-        /**
-        private DateTime GetReviewDate(List<Loan> list)
+        private DateTime GetReviewDate(List<ReviewQueue> list)
         {
             var reviewDate = list[0].StatusDate;
             foreach (var loan in list)
             {
                 //NOTE this can change depending on whether the latest or oldest date is needed
-                if (loan.StatusDate.HasValue && loan.StatusDate > reviewDate)
+                if (loan.StatusDate < reviewDate)
                 {
                     reviewDate = loan.StatusDate;
                 }
@@ -126,6 +127,5 @@ namespace calhfa_webapi.Controllers
 
             return (DateTime)reviewDate;
         }
-        **/
     }
 }
