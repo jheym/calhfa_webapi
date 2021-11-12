@@ -115,6 +115,10 @@ namespace calhfa_webapi.Controllers
 
         private DateTime GetReviewDate(List<ReviewQueue> list)
         {
+            if(list.Count == 0)
+            {
+                return DateTime.Now;
+            }
             var reviewDate = list[0].StatusDate;
             foreach (var loan in list)
             {
