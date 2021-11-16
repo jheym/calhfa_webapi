@@ -13,14 +13,18 @@ namespace calhfa_webapi.Controllers
     [ApiController]
     public class StatusCodesController : ControllerBase
     {
-        private readonly cal_haf_dummyContext _context;
+        private readonly cal_haf_Context _context;
 
-        public StatusCodesController(cal_haf_dummyContext context)
+        public StatusCodesController(cal_haf_Context context)
         {
             _context = context;
         }
 
         // GET: api/StatusCodes
+        /// <summary>
+        /// Grabs every entry in the StatusCodes table
+        /// </summary>
+        /// <returns>a list of every entry in StatusCodes</returns>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<StatusCode>>> GetStatusCodes()
         {
@@ -28,6 +32,11 @@ namespace calhfa_webapi.Controllers
         }
 
         // GET: api/StatusCodes/5
+        /// <summary>
+        /// Returns the record for particular loan status code. 404 error if code not found.
+        /// </summary>
+        /// <param name="id">int</param>
+        /// <returns>record for a particular status code in table</returns>
         [HttpGet("{id}")]
         public async Task<ActionResult<StatusCode>> GetStatusCode(int id)
         {
