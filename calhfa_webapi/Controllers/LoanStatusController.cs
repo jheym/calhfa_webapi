@@ -76,7 +76,14 @@ namespace calhfa_webapi.Controllers
             string jsonData = String.Format("{{compliantQueue: {{count: '{0}', date: '{1}'}}, " +
                 "compliantSuspenseQueue: {{ count: '{2}', date: '{3}' }}, " + 
                 "purchaseQueue: {{ count: '{4}', date: '{5}' }}, " + 
-                "purchaseSuspenseQueue: '{{ count: '{6}', date: '{7}' }} }}", ComplianceQueueList.Count, ComplianceReviewDate, ComplianceSuspenseQueueList.Count, ComplianceSuspenseDate,  PurchaseQueueList.Count, PurchaseReviewDate, PurchaseSuspenseQueueList.Count, PurchaseSuspenseDate);
+                "purchaseSuspenseQueue: '{{ count: '{6}', date: '{7}' }} }}", ComplianceQueueList.Count, 
+                ComplianceReviewDate.ToString("MM/dd/yyyy"), 
+                ComplianceSuspenseQueueList.Count, 
+                ComplianceSuspenseDate.ToString("MM/dd/yyyy"),  
+                PurchaseQueueList.Count, 
+                PurchaseReviewDate.ToString("MM/dd/yyyy"), 
+                PurchaseSuspenseQueueList.Count, 
+                PurchaseSuspenseDate.ToString("MM/dd/yyyy"));
 
             return Newtonsoft.Json.JsonConvert.SerializeObject(jsonData);
         }
@@ -115,21 +122,22 @@ namespace calhfa_webapi.Controllers
 
         private DateTime GetReviewDate(List<ReviewQueue> list)
         {
-            if(list.Count == 0)
+            var reviewDate = DateTime.Now;
+
+            if (list.Count != 0)
             {
-                return DateTime.Now;
-            }
-            var reviewDate = list[0].StatusDate;
-            foreach (var loan in list)
-            {
-                //NOTE this can change depending on whether the latest or oldest date is needed
-                if (loan.StatusDate < reviewDate)
+                foreach (var loan in list)
                 {
-                    reviewDate = loan.StatusDate;
+                    reviewDate = loan.StatusDate.Date;
+                    //NOTE this can change depending on whether the latest or oldest date is needed
+                    if (loan.StatusDate.Date < reviewDate)
+                    {
+                        reviewDate = loan.StatusDate;
+                    }
                 }
             }
 
-            return (DateTime)reviewDate;
+            return reviewDate;
         }
     }
 }
