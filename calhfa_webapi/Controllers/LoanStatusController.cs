@@ -73,17 +73,18 @@ namespace calhfa_webapi.Controllers
             var PurchaseSuspenseQueueList = GetQueueList(522, 2);
             var PurchaseSuspenseDate = GetReviewDate(PurchaseSuspenseQueueList);
 
+            string DateFormatting = "MMM d";
             string jsonData = String.Format("{{compliantQueue: {{count: '{0}', date: '{1}'}}, " +
                 "compliantSuspenseQueue: {{ count: '{2}', date: '{3}' }}, " + 
                 "purchaseQueue: {{ count: '{4}', date: '{5}' }}, " + 
                 "purchaseSuspenseQueue: '{{ count: '{6}', date: '{7}' }} }}", ComplianceQueueList.Count, 
-                ComplianceReviewDate.ToString("MM/dd/yyyy"), 
+                ComplianceReviewDate.ToString(DateFormatting), 
                 ComplianceSuspenseQueueList.Count, 
-                ComplianceSuspenseDate.ToString("MM/dd/yyyy"),  
+                ComplianceSuspenseDate.ToString(DateFormatting),  
                 PurchaseQueueList.Count, 
-                PurchaseReviewDate.ToString("MM/dd/yyyy"), 
+                PurchaseReviewDate.ToString(DateFormatting), 
                 PurchaseSuspenseQueueList.Count, 
-                PurchaseSuspenseDate.ToString("MM/dd/yyyy"));
+                PurchaseSuspenseDate.ToString(DateFormatting));
 
             return Newtonsoft.Json.JsonConvert.SerializeObject(jsonData);
         }
