@@ -6,13 +6,13 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace calhfa_webapi.Models
 {
-    public partial class cal_haf_Context : DbContext
+    public partial class DBContext : DbContext
     {
-        public cal_haf_Context()
+        public DBContext()
         {
         }
 
-        public cal_haf_Context(DbContextOptions<cal_haf_Context> options)
+        public DBContext(DbContextOptions<DBContext> options)
             : base(options)
         {
         }

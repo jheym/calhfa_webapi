@@ -13,9 +13,9 @@ namespace calhfa_webapi.Controllers
     [ApiController]
     public class CountController : Controller
     {
-        private readonly cal_haf_Context _context;
+        private readonly DBContext _context;
 
-        public CountController(cal_haf_Context context)
+        public CountController(DBContext context)
         {
             _context = context;
         }
