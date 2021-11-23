@@ -30,7 +30,7 @@ namespace calhfa_webapi
         {
 
             {
-                services.AddDbContext<cal_haf_Context>(options =>
+                services.AddDbContext<DBContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("cal_haf_dummy")));
             } 
 
