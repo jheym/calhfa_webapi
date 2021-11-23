@@ -31,7 +31,7 @@ namespace calhfa_webapi
 
             {
                 services.AddDbContext<cal_haf_Context>(options =>
-                    options.UseSqlServer(Configuration.GetConnectionString("cal_haf_dummy")));
+                    options.UseSqlServer(Configuration.GetConnectionString("cal_haf")));
             } 
 
              services.AddControllers();
@@ -53,7 +53,7 @@ namespace calhfa_webapi
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "calhfa_webapi v1"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("v1/swagger.json", "calhfa_webapi v1"));
             }
 
             app.UseHttpsRedirection();
