@@ -28,7 +28,7 @@ namespace calhfa_webapi.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Name=cal_haf_dummy");
+                optionsBuilder.UseSqlServer("Name=DBName");
             }
         }
 
