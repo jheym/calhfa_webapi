@@ -31,7 +31,7 @@ namespace calhfa_webapi
 
             {
                 services.AddDbContext<DBContext>(options =>
-                    options.UseSqlServer(Configuration.GetConnectionString("cal_haf")));
+                    options.UseSqlServer(Configuration.GetConnectionString("DBName")));
             } 
 
              services.AddControllers();
