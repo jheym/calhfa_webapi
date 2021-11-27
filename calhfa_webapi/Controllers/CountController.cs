@@ -29,7 +29,6 @@ namespace calhfa_webapi.Controllers
         [HttpGet]
         public string GetLoanCount()
         {
-            // codes ending with '10' are in review, codes ending in '22' are suspended & being reviewed after a resubmit
             var ComplianceQueueList = GetQueueList(410, 1);
             var ComplianceReviewDate = GetReviewDate(ComplianceQueueList);
 
@@ -92,7 +91,7 @@ namespace calhfa_webapi.Controllers
 
         private DateTime GetReviewDate(List<ReviewQueue> list)
         {
-            var reviewDate = DateTime.Now;
+            var reviewDate = DateTime.Now; // returns current date if Count = 0
 
             if (list.Count != 0)
             {
