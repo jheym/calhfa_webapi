@@ -37,7 +37,7 @@ namespace calhfa_webapi
              services.AddControllers();
              services.AddSwaggerGen(c =>
              {
-                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "calhfa_webapi", Version = "v1" });
+                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "California Housing and Finance API", Version = "v1" });
                  // configures swagger with the XML documentation comments
                  var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
                  var xmlPath = System.IO.Path.Combine(AppContext.BaseDirectory, xmlFile);
@@ -53,7 +53,7 @@ namespace calhfa_webapi
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "calhfa_webapi v1"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "calhaf_webapi v1"));
             }
 
             app.UseHttpsRedirection();

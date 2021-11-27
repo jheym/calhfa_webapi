@@ -21,10 +21,33 @@ namespace calhfa_webapi.Controllers
         }
 
         /// <summary>
-        /// Counts the total number of loans which are queued for review pre and post closing
-        /// Also finds the oldest date for each queue category
+        /// Gets a count of loans in the first and subordinate queues.
         /// </summary>
-        /// <returns> a json formatted string which contains the counts and dates for the review categories </returns>
+        /// <remarks>
+        /// Sample JSON returned by count
+        /// 
+        ///     GET api/count
+        ///     {
+        ///         "compliantQueue" : {
+        ///             "count" : 10,
+        ///             "date" : Aug 21
+        ///         },
+        ///         "compliantSuspenseQueue" :
+        ///             "count" : 4,
+        ///             "date" : Jul 22
+        ///         },
+        ///         "purchaseQueue" : 
+        ///             "count" : 2,
+        ///             "date" : Oct 1
+        ///         },
+        ///         "purchaseSuspenseQueue" : {
+        ///             "count" : 3,
+        ///             "date" : Dec 25
+        ///         }
+        ///     }
+        ///   
+        /// </remarks>
+        /// <returns> a json formatted string which contains the counts and oldest dates for first and subordinate queues </returns>
         // GET: /api/LoanStatus/count
         [HttpGet]
         public string GetLoanCount()
