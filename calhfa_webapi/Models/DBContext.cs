@@ -28,7 +28,7 @@ namespace calhfa_webapi.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Name=cal_haf_dummy");
+                optionsBuilder.UseSqlServer("Name=DBName");
             }
         }
 
@@ -36,7 +36,7 @@ namespace calhfa_webapi.Models
         {
             modelBuilder.HasAnnotation("Relational:Collation", "SQL_Latin1_General_CP1_CI_AS");
 
-            modelBuilder.Entity<ReviewQueue>().HasNoKey();
+            modelBuilder.Entity<ReviewQueue>().HasNoKey(); // For EF Compatibility with raw SQL Queries
 
             modelBuilder.Entity<Loan>(entity =>
             {
