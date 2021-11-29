@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Rewrite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -55,6 +56,11 @@ namespace calhfa_webapi
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "calhaf_webapi v1"));
             }
+            
+            // Redirects home page to Swagger
+            var option = new RewriteOptions();      // Remove this line to stop redirecting the home page
+            option.AddRedirect("^$", "swagger");    // Remove this line to stop redirecting the home page
+            app.UseRewriter(option);                // Remove this line to stop redirecting the home page
 
             app.UseHttpsRedirection();
 
