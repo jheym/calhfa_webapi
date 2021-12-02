@@ -17,7 +17,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "calhfa_webapi": {
+    "Kestrel / Dotnet CLI": {
       "commandName": "Project",
       "launchBrowser": true,
       "launchUrl": "swagger",

@@ -30,19 +30,19 @@ namespace calhfa_webapi.Controllers
         ///     {
         ///         "compliantQueue" : {
         ///             "count" : 10,
-        ///             "date" : Aug 21
+        ///             "date" : 2021-08-21
         ///         },
         ///         "compliantSuspenseQueue" :
         ///             "count" : 4,
-        ///             "date" : Jul 22
+        ///             "date" : 2021-07-22
         ///         },
         ///         "purchaseQueue" : 
         ///             "count" : 2,
-        ///             "date" : Oct 1
+        ///             "date" : 2021-10-01
         ///         },
         ///         "purchaseSuspenseQueue" : {
         ///             "count" : 3,
-        ///             "date" : Dec 25
+        ///             "date" : 2021-12-25
         ///         }
         ///     }
         ///   
@@ -64,7 +64,7 @@ namespace calhfa_webapi.Controllers
             var PurchaseSuspenseQueueList = GetQueueList(522, 2);
             var PurchaseSuspenseDate = GetReviewDate(PurchaseSuspenseQueueList);
 
-            string DateFormatting = "MMM d";
+            string DateFormatting = "yyyy-MM-dd";
             string jsonData = String.Format("{{compliantQueue: {{count: '{0}', date: '{1}'}}, " +
                 "compliantSuspenseQueue: {{ count: '{2}', date: '{3}' }}, " +
                 "purchaseQueue: {{ count: '{4}', date: '{5}' }}, " +
