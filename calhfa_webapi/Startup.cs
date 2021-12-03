@@ -1,4 +1,4 @@
-using calhfa_webapi.Models;
+using CalhfaWebapi.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -15,7 +15,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace calhfa_webapi
+namespace CalhfaWebapi
 {
     public class Startup
     {

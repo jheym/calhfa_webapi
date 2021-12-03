@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 #nullable disable
 
-namespace calhfa_webapi.Models
+namespace CalhfaWebapi.Models
 {
     public partial class LoanCategory
     {

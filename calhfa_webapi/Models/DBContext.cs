@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 #nullable disable
 
-namespace calhfa_webapi.Models
+namespace CalhfaWebapi.Models
 {
     public partial class DBContext : DbContext
     {
@@ -23,7 +23,7 @@ namespace calhfa_webapi.Models
         public virtual DbSet<LoanType> LoanTypes { get; set; }
         public virtual DbSet<StatusCode> StatusCodes { get; set; }
 
-        public virtual DbSet<ReviewQueue> ReviewQueue { get; set; }
+        public virtual DbSet<ReviewCount> ReviewQueue { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -36,7 +36,7 @@ namespace calhfa_webapi.Models
         {
             modelBuilder.HasAnnotation("Relational:Collation", "SQL_Latin1_General_CP1_CI_AS");
 
-            modelBuilder.Entity<ReviewQueue>().HasNoKey(); // For EF Compatibility with raw SQL Queries
+            modelBuilder.Entity<ReviewCount>().HasNoKey(); // For EF Compatibility with raw SQL Queries
 
             modelBuilder.Entity<Loan>(entity =>
             {
