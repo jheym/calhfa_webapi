@@ -5,9 +5,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using calhfa_webapi.Models;
+using CalhfaWebapi.Models;
+using System.Globalization;
 
-namespace calhfa_webapi.Controllers
+namespace CalhfaWebapi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -52,30 +53,30 @@ namespace calhfa_webapi.Controllers
         [HttpGet]
         public string GetLoanCount()
         {
-            var ComplianceQueueList = GetQueueList(410, 1);
-            var ComplianceReviewDate = GetReviewDate(ComplianceQueueList);
+            var complianceQueueList = GetQueueList(410, 1);
+            var complianceReviewDate = GetReviewDate(complianceQueueList);
 
-            var ComplianceSuspenseQueueList = GetQueueList(422, 1);
-            var ComplianceSuspenseDate = GetReviewDate(ComplianceSuspenseQueueList);
+            var complianceSuspenseQueueList = GetQueueList(422, 1);
+            var complianceSuspenseDate = GetReviewDate(complianceSuspenseQueueList);
 
-            var PurchaseQueueList = GetQueueList(510, 2);
-            var PurchaseReviewDate = GetReviewDate(PurchaseQueueList);
+            var purchaseQueueList = GetQueueList(510, 2);
+            var purchaseReviewDate = GetReviewDate(purchaseQueueList);
 
-            var PurchaseSuspenseQueueList = GetQueueList(522, 2);
-            var PurchaseSuspenseDate = GetReviewDate(PurchaseSuspenseQueueList);
+            var purchaseSuspenseQueueList = GetQueueList(522, 2);
+            var purchaseSuspenseDate = GetReviewDate(purchaseSuspenseQueueList);
 
-            string DateFormatting = "yyyy-MM-dd";
+            string dateFormatting = "yyyy-MM-dd";
             string jsonData = String.Format("{{compliantQueue: {{count: '{0}', date: '{1}'}}, " +
                 "compliantSuspenseQueue: {{ count: '{2}', date: '{3}' }}, " +
                 "purchaseQueue: {{ count: '{4}', date: '{5}' }}, " +
-                "purchaseSuspenseQueue: '{{ count: '{6}', date: '{7}' }} }}", ComplianceQueueList.Count,
-                ComplianceReviewDate.ToString(DateFormatting),
-                ComplianceSuspenseQueueList.Count,
-                ComplianceSuspenseDate.ToString(DateFormatting),
-                PurchaseQueueList.Count,
-                PurchaseReviewDate.ToString(DateFormatting),
-                PurchaseSuspenseQueueList.Count,
-                PurchaseSuspenseDate.ToString(DateFormatting));
+                "purchaseSuspenseQueue: '{{ count: '{6}', date: '{7}' }} }}", complianceQueueList.Count,
+                complianceReviewDate.ToString(dateFormatting),
+                complianceSuspenseQueueList.Count,
+                complianceSuspenseDate.ToString(dateFormatting),
+                purchaseQueueList.Count,
+                purchaseReviewDate.ToString(dateFormatting),
+                purchaseSuspenseQueueList.Count,
+                purchaseSuspenseDate.ToString(dateFormatting, CultureInfo.CurrentCulture));
 
             return Newtonsoft.Json.JsonConvert.SerializeObject(jsonData);
         }
@@ -87,9 +88,9 @@ namespace calhfa_webapi.Controllers
         /// <param name="statusCode">int</param>
         /// <param name="categoryID">int</param>
         /// <returns>list with all loans in specified queue</returns>
-        private List<ReviewQueue> GetQueueList(int statusCode, int categoryID)
+        private List<ReviewCount> GetQueueList(int statusCode, int categoryID)
         {
-            string SQLQuery = @"SELECT Loan.LoanID, LoanType.LoanCategoryID, StatusCode, LoanStatus.StatusDate
+            string sqlQuery = @"SELECT Loan.LoanID, LoanType.LoanCategoryID, StatusCode, LoanStatus.StatusDate
                                 FROM Loan
                                 INNER JOIN(
                                     SELECT LoanStatus.LoanID, LoanStatus.StatusCode, LoanStatus.StatusSequence, LoanStatus.StatusDate
@@ -107,26 +108,29 @@ namespace calhfa_webapi.Controllers
                                 ) LoanType ON LoanType.LoanTypeID = Loan.LoanTypeID
                                 WHERE StatusCode = {1}
                                 ORDER BY Loan.LoanID";
-            var queuedLoans = _context.ReviewQueue.FromSqlRaw(SQLQuery, categoryID, statusCode).ToList();
+            var queuedLoans = _context.ReviewQueue.FromSqlRaw(sqlQuery, categoryID, statusCode).ToList();
 
             return queuedLoans;
         }
 
-        private DateTime GetReviewDate(List<ReviewQueue> list)
+        private DateTime GetReviewDate(List<ReviewCount> list)
         {
-            var reviewDate = DateTime.Now; // returns current date if Count = 0
+            DateTime reviewDate;
 
             if (list.Count != 0)
             {
-                foreach (var loan in list)
+                reviewDate = list[0].StatusDate;
+                for(int i = 1; i < list.Count; i++)
                 {
-                    reviewDate = loan.StatusDate.Date;
                     // returns oldest (first in queue)
-                    if (loan.StatusDate.Date < reviewDate)
+                    if (list[i].StatusDate < reviewDate)
                     {
-                        reviewDate = loan.StatusDate;
+                        reviewDate = list[i].StatusDate;
                     }
                 }
+            } else
+            {
+                reviewDate = DateTime.Now; // returns current date if Count = 0
             }
 
             return reviewDate;

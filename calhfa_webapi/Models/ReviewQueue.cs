@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace calhfa_webapi.Models
+namespace CalhfaWebapi.Models
 {
-    public class ReviewQueue
+    public class ReviewCount
     {
         // Loan.LoanID, LoanType.LoanCategoryID, StatusCode, LoanStatus.StatusDate
         // public type ColumnName { get; set; }
