@@ -83,12 +83,6 @@ namespace CalhfaWebapi.Controllers
             postClosingLoansCounts.Add("inSuspense", postClosingInSuspenseCount);
 
             // combines both table sections (pre closing and post closing) into one dictionary
-            var FileReviewCounts = new Dictionary<string, Dictionary<string, LoanStatus>>
-            {
-                { "PreClosing", preClosingLoansCounts},
-                { "PostClosing", postClosingLoansCounts}
-            };
-
             // web api will serialize output to JSON formatting.
             // formatting is automatic and any object/data structure which be stored in an Enumerable type 
             // can be serialized to JSON formatting.
