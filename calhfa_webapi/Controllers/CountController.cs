@@ -29,23 +29,27 @@ namespace CalhfaWebapi.Controllers
         /// 
         ///     GET api/count
         ///     {
-        ///         "compliantQueue" : {
-        ///             "count" : 10,
-        ///             "date" : 2021-08-21
+        ///         "PreClosing" : {
+        ///             "compliance" : {
+        ///                 "count" : 10,
+        ///                 "date" : 2021-08-21
+        ///             },
+        ///             "inSuspense" : {
+        ///                 "count" : 4,
+        ///                 "date" : 2021-07-22
+        ///             }
         ///         },
-        ///         "compliantSuspenseQueue" :
-        ///             "count" : 4,
-        ///             "date" : 2021-07-22
-        ///         },
-        ///         "purchaseQueue" : 
-        ///             "count" : 2,
-        ///             "date" : 2021-10-01
-        ///         },
-        ///         "purchaseSuspenseQueue" : {
-        ///             "count" : 3,
-        ///             "date" : 2021-12-25
+        ///         "PostClosing" : {
+        ///             "compliance" : {
+        ///                 "count" : 2,
+        ///                 "date" : 2021-10-01
+        ///             },
+        ///             "inSuspense" : {
+        ///                 "count" : 3,
+        ///                 "date" : 2021-12-25
+        ///             }
         ///         }
-        ///     }
+        ///   }
         ///   
         /// </remarks>
         /// <returns> a json formatted string which contains the counts and oldest dates for first and subordinate queues </returns>
