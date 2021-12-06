@@ -106,7 +106,7 @@ namespace CalhfaWebapi.Controllers
         /// <returns>list with all loans in specified queue</returns>
         private List<ReviewCount> GetQueueList(int statusCode, int categoryID)
         {
-            string sqlQuery = @"SELECT Loan.LoanID, LoanType.LoanCategoryID, StatusCode, LoanStatus.StatusDate
+            string sqlQuery = @"SELECT LoanStatus.StatusDate
                                 FROM Loan
                                 INNER JOIN(
                                     SELECT LoanStatus.LoanID, LoanStatus.StatusCode, LoanStatus.StatusSequence, LoanStatus.StatusDate
