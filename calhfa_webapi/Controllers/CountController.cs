@@ -51,34 +51,52 @@ namespace CalhfaWebapi.Controllers
         /// <returns> a json formatted string which contains the counts and oldest dates for first and subordinate queues </returns>
         // GET: /api/LoanStatus/count
         [HttpGet]
-        public string GetLoanCount()
+        public Dictionary<string,Dictionary<string, LoanStatus>> GetLoanCount()
         {
-            var complianceQueueList = GetQueueList(410, 1);
-            var complianceReviewDate = GetReviewDate(complianceQueueList);
-
-            var complianceSuspenseQueueList = GetQueueList(422, 1);
-            var complianceSuspenseDate = GetReviewDate(complianceSuspenseQueueList);
-
-            var purchaseQueueList = GetQueueList(510, 2);
-            var purchaseReviewDate = GetReviewDate(purchaseQueueList);
-
-            var purchaseSuspenseQueueList = GetQueueList(522, 2);
-            var purchaseSuspenseDate = GetReviewDate(purchaseSuspenseQueueList);
-
             string dateFormatting = "yyyy-MM-dd";
-            string jsonData = String.Format("{{compliantQueue: {{count: '{0}', date: '{1}'}}, " +
-                "compliantSuspenseQueue: {{ count: '{2}', date: '{3}' }}, " +
-                "purchaseQueue: {{ count: '{4}', date: '{5}' }}, " +
-                "purchaseSuspenseQueue: '{{ count: '{6}', date: '{7}' }} }}", complianceQueueList.Count,
-                complianceReviewDate.ToString(dateFormatting),
-                complianceSuspenseQueueList.Count,
-                complianceSuspenseDate.ToString(dateFormatting),
-                purchaseQueueList.Count,
-                purchaseReviewDate.ToString(dateFormatting),
-                purchaseSuspenseQueueList.Count,
-                purchaseSuspenseDate.ToString(dateFormatting, CultureInfo.CurrentCulture));
+            Dictionary<string, LoanStatus> preClosingLoansCounts = new();
+            Dictionary<string, LoanStatus> postClosingLoansCounts = new();
 
-            return Newtonsoft.Json.JsonConvert.SerializeObject(jsonData);
+            var preClosingComplianceList = (GetQueueList(410, 1)); //returns list of loans which are PRE closing and in Compliance Review
+            var preClosingComplianceeDate = GetReviewDate(preClosingComplianceList); 
+            LoanStatus preClosingComplianceCounts = new(preClosingComplianceList.Count, preClosingComplianceeDate.ToString(dateFormatting));
+
+            var preClosingInSuspenseList = GetQueueList(422, 1); //returns list of loans which are PRE closing and in suspense review
+            var preClosingInSuspenseDate = GetReviewDate(preClosingInSuspenseList);
+            LoanStatus preClosingInSuspenseCounts = new(preClosingInSuspenseList.Count, preClosingInSuspenseDate.ToString(dateFormatting));
+
+            // builds a dictionary which mirrors JSON formatting for the first Section of website
+            preClosingLoansCounts.Add("compliance", preClosingComplianceCounts);
+            preClosingLoansCounts.Add("inSuspense", preClosingInSuspenseCounts);
+
+
+            var postClosingComplianceList= GetQueueList(510, 2); //returns list of loans which are POST closing and in compliance review
+            var postClosingComplianceDate = GetReviewDate(postClosingComplianceList);
+            LoanStatus postClosingComplianceCounts= new(postClosingComplianceList.Count, postClosingComplianceDate.ToString(dateFormatting));
+
+            var postClosingInSuspenseList = GetQueueList(522, 2); //returns list of loans which are POST closing and in suspense review
+            var postClosingInSuspenseDate = GetReviewDate(postClosingInSuspenseList);
+            LoanStatus postClosingInSuspenseCount = new(postClosingInSuspenseList.Count, postClosingInSuspenseDate.ToString(dateFormatting));
+
+            // builds a dictionary which mirrors JSON formatting for the post closing Section of website
+            postClosingLoansCounts.Add("compliance", postClosingComplianceCounts);
+            postClosingLoansCounts.Add("inSuspense", postClosingInSuspenseCount);
+
+            // combines both table sections (pre closing and post closing) into one dictionary
+            var FileReviewCounts = new Dictionary<string, Dictionary<string, LoanStatus>>
+            {
+                { "PreClosing", preClosingLoansCounts},
+                { "PostClosing", postClosingLoansCounts}
+            };
+
+            // web api will serialize output to JSON formatting.
+            // formatting is automatic and any object/data structure which be stored in an Enumerable type 
+            // can be serialized to JSON formatting.
+            return new Dictionary<string, Dictionary<string, LoanStatus>>
+            {
+                { "PreClosing", preClosingLoansCounts},
+                { "PostClosing", postClosingLoansCounts}
+            };
         }
 
         /// <summary>
@@ -134,6 +152,19 @@ namespace CalhfaWebapi.Controllers
             }
 
             return reviewDate;
+        }
+        
+        // each instance of LoanStatus is one row in the website's table data
+        // keeps track of how many lines are in that queue and what the oldest date in the queue is
+        public class LoanStatus
+        {
+            public LoanStatus(int count, string date)
+            {
+                this.count = count;
+                this.date = date;
+            }
+            public int count { get; set; }
+            public string date { get; set; }
         }
     }
 }
