@@ -103,7 +103,7 @@ namespace calhfa_webapi.Controllers
                                 INNER Join(
                                     SELECT LoanType.LoanCategoryID, LoanType.LoanTypeID
                                     FROM LoanType
-                                    WHERE LoanType.LoanCategoryID = {0}
+                                    WHERE LoanType.LoanCategoryID = {0}     
                                 ) LoanType ON LoanType.LoanTypeID = Loan.LoanTypeID
                                 WHERE StatusCode = {1}
                                 ORDER BY Loan.LoanID";
