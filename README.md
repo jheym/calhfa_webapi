@@ -13,7 +13,7 @@ The package contents include:
 
 We assume CalHFA will be using IIS, but if that is not the case, below we have included a very general set up guide with just the essentials they need to know for setting up our API.
 
-GENERAL HOSTING INSTRUCTIONS
+## GENERAL HOSTING INSTRUCTIONS
 
 1. Install latest ASP.NET Core Runtime 5.0.x (https://dotnet.microsoft.com/download/dotnet/5.0)
 
