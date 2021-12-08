@@ -10,7 +10,7 @@ using System.Globalization;
 
 namespace CalhfaWebapi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/count")]
     [ApiController]
     public class CountController : Controller
     {
@@ -27,7 +27,7 @@ namespace CalhfaWebapi.Controllers
         /// <remarks>
         /// Sample JSON returned by count
         /// 
-        ///     GET api/count
+        ///     GET api/Count
         ///     {
         ///         "PreClosing" : {
         ///             "compliance" : {
