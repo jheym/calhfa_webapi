@@ -1,10 +1,7 @@
-# Overview
-## Main Goal
-Given some database schema provided by the calHFA team, our API should be able to update the figures listed under "File Review Status" on this webpage: https://www.calhfa.ca.gov/homeownership/index.htm
+This source code is for CalHFA from Sac State as part of a joint collaboration between students in Professor Salem's Fall 2021 CSC130-02 class.
+Our team consists of 5 members. Justin Heyman, Team Lead; David Enzler, Lead Software Developer; Isaac Williams, Developer; Johnny Velazquez, Developer; and Jamal Stanackzai. Our team name is "In Over Our Heads." 
 
-## Other Goals
-* Make it as easy for them to deploy as possible
-	* Provide clear documentation for how to set it up on their end
-* Add authentication 
-* Make it scalable so that they may implement new API functionalities in the future
-* Document how they can adapt it to accomplish other tasks with their database.
+In Over Our Heads gives CalHFA this project freely, to use however they see fit.
+
+
+
